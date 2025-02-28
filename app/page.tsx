@@ -17,72 +17,81 @@ import {
   TableSortLabel,
   Checkbox
 } from "@mui/material";
-import {
-  useState,
-  useEffect
-} from 'react';
+import { useState, useEffect } from 'react';
 
 // テーブルデータの型を定義
-type TestTable = {
+type ClassSchedule = {
   id: number;
-  hoge: string;
-  fuga: number;
-  isActive: boolean;
-}
+  クォーター: string;
+  曜日: string;
+  時間: string;
+  時間割番号: string;
+  科目区分: string;
+  講義名: string;
+  ファイル名: string;
+};
 
 // createColumnHelper を利用してカラム定義を作成
-const columnHelper = createColumnHelper<TestTable>();
+const columnHelper = createColumnHelper<ClassSchedule>();
 
 const testTableColumnDefs = [
-  columnHelper.accessor((row) => row.isActive, {
-    id: 'isActive',
-    header: 'Active',
-    cell: info => (
-      <input
-        type="checkbox"
-        checked={info.getValue()}
-        onChange={() => {
-          const currentRow = info.row.original;
-          currentRow.isActive = !currentRow.isActive;
-        }}
-      />
-    ),
-  }),
-  columnHelper.accessor((row) => row.hoge, {
-    id: 'hoge',
-    header: 'hoge',
+  columnHelper.accessor((row) => row.クォーター, {
+    id: 'クォーター',
+    header: 'クォーター',
     sortingFn: 'alphanumeric',
   }),
-  columnHelper.accessor((row) => row.fuga, {
-    id: 'fuga',
-    header: 'fuga',
-    sortingFn: 'basic',
+  columnHelper.accessor((row) => row.曜日, {
+    id: '曜日',
+    header: '曜日',
+    sortingFn: 'alphanumeric',
+  }),
+  columnHelper.accessor((row) => row.時間, {
+    id: '時間',
+    header: '時間',
+    sortingFn: 'alphanumeric',
+  }),
+  columnHelper.accessor((row) => row.科目区分, {
+    id: '科目区分',
+    header: '科目区分',
+    sortingFn: 'alphanumeric',
+  }),
+  columnHelper.accessor((row) => row.講義名, {
+    id: '講義名',
+    header: '講義名',
+    sortingFn: 'alphanumeric',
+  }),
+  columnHelper.accessor((row) => row.ファイル名, {
+    id: 'ファイル名',
+    header: 'ファイル名',
+    sortingFn: 'alphanumeric',
   }),
 ];
 
 export default function Page() {
-  const [data, setData] = useState<TestTable[]>([]);
+  const [data, setData] = useState<ClassSchedule[]>([]);
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
-  const [orderBy, setOrderBy] = useState<keyof TestTable>('hoge');
+  const [orderBy, setOrderBy] = useState<keyof ClassSchedule>('クォーター');
   const [selected, setSelected] = useState<number[]>([]);
 
   useEffect(() => {
     // 仮のJSONデータを読み込む
     const fetchData = async () => {
       const url = process.env.NODE_ENV === 'development'
-        ? '/data.json'
-        : 'https://ysdzm.github.io/nitech-daigakuin-rishu-checker/data.json';
+        ? '/all_timetable_data.json'
+        : 'https://ysdzm.github.io/nitech-daigakuin-rishu-checker/all_timetable_data.json';
 
       const response = await fetch(url);
-      const jsonData: TestTable[] = await response.json();
-      setData(jsonData);
+      const jsonData: ClassSchedule[] = await response.json();
+      // IDを付与
+      const dataWithId = jsonData.map((item, index) => ({ ...item, id: index + 1 }));
+      setData(dataWithId);
     };
 
     fetchData();
   }, []);
 
   // ソート処理
-  const handleSort = (property: keyof TestTable) => {
+  const handleSort = (property: keyof ClassSchedule) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
@@ -102,37 +111,60 @@ export default function Page() {
   };
 
   // useReactTable 呼び出し
-  const table = useReactTable<TestTable>({
+  const table = useReactTable<ClassSchedule>({
     columns: testTableColumnDefs,
     data: data,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    enableRowSelection: (row) => row.original.isActive,
   });
 
   return (
-    <TableContainer component={Paper} sx={{ maxWidth: 600, margin: "auto", mt: 4 }}>
+    <TableContainer component={Paper} sx={{ maxWidth: 1000, margin: "auto", mt: 4 }}>
       <Table>
         <TableHead>
           <TableRow>
             <TableCell>選択</TableCell>
             <TableCell>
               <TableSortLabel
-                active={orderBy === 'hoge'}
-                direction={orderBy === 'hoge' ? order : 'asc'}
-                onClick={() => handleSort('hoge')}
+                active={orderBy === 'クォーター'}
+                direction={orderBy === 'クォーター' ? order : 'asc'}
+                onClick={() => handleSort('クォーター')}
               >
-                名前
+                クォーター
               </TableSortLabel>
             </TableCell>
             <TableCell>
               <TableSortLabel
-                active={orderBy === 'fuga'}
-                direction={orderBy === 'fuga' ? order : 'asc'}
-                onClick={() => handleSort('fuga')}
+                active={orderBy === '曜日'}
+                direction={orderBy === '曜日' ? order : 'asc'}
+                onClick={() => handleSort('曜日')}
               >
-                年齢
+                曜日
               </TableSortLabel>
+            </TableCell>
+            <TableCell>
+              <TableSortLabel
+                active={orderBy === '時間'}
+                direction={orderBy === '時間' ? order : 'asc'}
+                onClick={() => handleSort('時間')}
+              >
+                時間
+              </TableSortLabel>
+            </TableCell>
+            <TableCell>
+              <TableSortLabel
+                active={orderBy === '科目区分'}
+                direction={orderBy === '科目区分' ? order : 'asc'}
+                onClick={() => handleSort('科目区分')}
+              >
+                科目区分
+              </TableSortLabel>
+            </TableCell>
+            <TableCell>
+              講義名
+            </TableCell>
+            <TableCell>
+              ファイル名
             </TableCell>
           </TableRow>
         </TableHead>
@@ -145,8 +177,12 @@ export default function Page() {
                   onChange={() => handleSelect(row.id)}
                 />
               </TableCell>
-              <TableCell>{row.hoge}</TableCell>
-              <TableCell>{row.fuga}</TableCell>
+              <TableCell>{row.クォーター}</TableCell>
+              <TableCell>{row.曜日}</TableCell>
+              <TableCell>{row.時間}</TableCell>
+              <TableCell>{row.科目区分}</TableCell>
+              <TableCell>{row.講義名}</TableCell>
+              <TableCell>{row.ファイル名}</TableCell>
             </TableRow>
           ))}
         </TableBody>
