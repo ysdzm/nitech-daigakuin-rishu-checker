@@ -1,6 +1,6 @@
 'use client';
 
-import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import { createColumnHelper, getCoreRowModel, useReactTable, getSortedRowModel } from '@tanstack/react-table';
 import { ShowTable } from '@/components/ShowTable';
 import { useState, useEffect } from 'react';
 
@@ -32,10 +32,12 @@ const testTableColumnDefs = [
   columnHelper.accessor((row) => row.hoge, {
     id: 'hoge',
     header: 'hoge',
+    sortingFn: 'alphanumeric',
   }),
   columnHelper.accessor((row) => row.fuga, {
     id: 'fuga',
     header: 'fuga',
+    sortingFn: 'basic',
   }),
 ];
 
@@ -63,6 +65,7 @@ export default function Page() {
     columns: testTableColumnDefs,
     data: data,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
     enableRowSelection: (row) => row.original.isActive,
   });
 
