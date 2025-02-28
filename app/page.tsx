@@ -1,11 +1,30 @@
 'use client';
 
-import { createColumnHelper, getCoreRowModel, useReactTable, getSortedRowModel } from '@tanstack/react-table';
-import { ShowTable } from '@/components/ShowTable';
-import { useState, useEffect } from 'react';
+import {
+  createColumnHelper,
+  getCoreRowModel,
+  useReactTable,
+  getSortedRowModel
+} from '@tanstack/react-table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  TableSortLabel,
+  Checkbox
+} from "@mui/material";
+import {
+  useState,
+  useEffect
+} from 'react';
 
 // テーブルデータの型を定義
 type TestTable = {
+  id: number;
   hoge: string;
   fuga: number;
   isActive: boolean;
@@ -69,5 +88,36 @@ export default function Page() {
     enableRowSelection: (row) => row.original.isActive,
   });
 
-  return <ShowTable table={table} />;
+  return (
+    <TableContainer component={Paper} sx={{ maxWidth: 600, margin: "auto", mt: 4 }}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>選択</TableCell>
+            <TableCell>
+              <TableSortLabel>
+                名前
+              </TableSortLabel>
+            </TableCell>
+            <TableCell>
+              <TableSortLabel>
+                年齢
+              </TableSortLabel>
+            </TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {data.map((row) => (
+            <TableRow key={row.id}>
+              <TableCell>
+                <Checkbox />
+              </TableCell>
+              <TableCell>{row.hoge}</TableCell>
+              <TableCell>{row.fuga}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
 }
