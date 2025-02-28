@@ -182,11 +182,21 @@ export default function Page() {
               <TableCell>{row.時間}</TableCell>
               <TableCell>{row.科目区分}</TableCell>
               <TableCell>{row.講義名}</TableCell>
-              <TableCell>{row.ファイル名}</TableCell>
+              <TableCell>
+                <a
+                  href={`https://syllabus.ict.nitech.ac.jp/view.php?id=${row.ファイル名}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                >
+                  {row.ファイル名}
+                </a>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
     </TableContainer>
+
   );
 }
