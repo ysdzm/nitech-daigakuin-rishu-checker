@@ -170,8 +170,8 @@ export default function Page() {
         </TableHead>
         <TableBody>
           {data.map((row) => (
-            <TableRow key={row.id}>
-              <TableCell>
+            <TableRow key={row.id} sx={{ height: 40 }}>
+              <TableCell sx={{ padding: '4px 8px' }}>
                 <Checkbox
                   checked={selected.includes(row.id)}
                   onChange={() => handleSelect(row.id)}
