@@ -30,7 +30,12 @@ export default function Page() {
   useEffect(() => {
     // 仮のJSONデータを読み込む
     const fetchData = async () => {
-      const response = await fetch('/data.json'); // データのパスを指定
+      // 本番環境かローカル環境かをチェック
+      const url = process.env.NODE_ENV === 'development'
+        ? '/data.json' // ローカル開発環境
+        : 'https://ysdzm.github.io/nitech-daigakuin-rishu-checker/data.json'; // 本番環境
+  
+      const response = await fetch(url);
       const jsonData: TestTable[] = await response.json();
       setData(jsonData);
     };
