@@ -8,12 +8,27 @@ import { useState, useEffect } from 'react';
 type TestTable = {
   hoge: string;
   fuga: number;
+  isActive: boolean;
 }
 
 // createColumnHelper を利用してカラム定義を作成
 const columnHelper = createColumnHelper<TestTable>();
 
 const testTableColumnDefs = [
+  columnHelper.accessor((row) => row.isActive, {
+    id: 'isActive',
+    header: 'Active',
+    cell: info => (
+      <input
+        type="checkbox"
+        checked={info.getValue()}
+        onChange={() => {
+          const currentRow = info.row.original;
+          currentRow.isActive = !currentRow.isActive;
+        }}
+      />
+    ),
+  }),
   columnHelper.accessor((row) => row.hoge, {
     id: 'hoge',
     header: 'hoge',
@@ -34,12 +49,12 @@ export default function Page() {
       const url = process.env.NODE_ENV === 'development'
         ? '/data.json' // ローカル開発環境
         : 'https://ysdzm.github.io/nitech-daigakuin-rishu-checker/data.json'; // 本番環境
-  
+
       const response = await fetch(url);
       const jsonData: TestTable[] = await response.json();
       setData(jsonData);
     };
-    
+
     fetchData();
   }, []);
 
@@ -48,6 +63,7 @@ export default function Page() {
     columns: testTableColumnDefs,
     data: data,
     getCoreRowModel: getCoreRowModel(),
+    enableRowSelection: (row) => row.original.isActive,
   });
 
   return <ShowTable table={table} />;
