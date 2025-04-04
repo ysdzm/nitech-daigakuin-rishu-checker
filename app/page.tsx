@@ -129,8 +129,8 @@ export default function Page() {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>選択</TableCell>
-              <TableCell>
+              <TableCell sx={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>選択</TableCell>
+              <TableCell sx={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
                 <TableSortLabel
                   active={orderBy === 'クォーター'}
                   direction={orderBy === 'クォーター' ? order : 'asc'}
@@ -139,7 +139,7 @@ export default function Page() {
                   クォーター
                 </TableSortLabel>
               </TableCell>
-              <TableCell>
+              <TableCell sx={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
                 <TableSortLabel
                   active={orderBy === '曜日'}
                   direction={orderBy === '曜日' ? order : 'asc'}
@@ -148,7 +148,7 @@ export default function Page() {
                   曜日
                 </TableSortLabel>
               </TableCell>
-              <TableCell>
+              <TableCell sx={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
                 <TableSortLabel
                   active={orderBy === '時間'}
                   direction={orderBy === '時間' ? order : 'asc'}
@@ -157,7 +157,7 @@ export default function Page() {
                   時間
                 </TableSortLabel>
               </TableCell>
-              <TableCell>
+              <TableCell sx={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
                 <TableSortLabel
                   active={orderBy === '科目区分'}
                   direction={orderBy === '科目区分' ? order : 'asc'}
@@ -166,10 +166,10 @@ export default function Page() {
                   科目区分
                 </TableSortLabel>
               </TableCell>
-              <TableCell>
+              <TableCell sx={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
                 講義名
               </TableCell>
-              <TableCell>
+              <TableCell sx={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
                 ファイル名
               </TableCell>
             </TableRow>
@@ -210,8 +210,8 @@ export default function Page() {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>選択</TableCell>
-              <TableCell>
+              <TableCell sx={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>選択</TableCell>
+              <TableCell sx={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
                 <TableSortLabel
                   active={orderBy === 'クォーター'}
                   direction={orderBy === 'クォーター' ? order : 'asc'}
@@ -220,7 +220,7 @@ export default function Page() {
                   クォーター
                 </TableSortLabel>
               </TableCell>
-              <TableCell>
+              <TableCell sx={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
                 <TableSortLabel
                   active={orderBy === '曜日'}
                   direction={orderBy === '曜日' ? order : 'asc'}
@@ -229,7 +229,7 @@ export default function Page() {
                   曜日
                 </TableSortLabel>
               </TableCell>
-              <TableCell>
+              <TableCell sx={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
                 <TableSortLabel
                   active={orderBy === '時間'}
                   direction={orderBy === '時間' ? order : 'asc'}
@@ -238,7 +238,7 @@ export default function Page() {
                   時間
                 </TableSortLabel>
               </TableCell>
-              <TableCell>
+              <TableCell sx={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
                 <TableSortLabel
                   active={orderBy === '科目区分'}
                   direction={orderBy === '科目区分' ? order : 'asc'}
@@ -247,10 +247,10 @@ export default function Page() {
                   科目区分
                 </TableSortLabel>
               </TableCell>
-              <TableCell>
+              <TableCell sx={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
                 講義名
               </TableCell>
-              <TableCell>
+              <TableCell sx={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
                 ファイル名
               </TableCell>
             </TableRow>
