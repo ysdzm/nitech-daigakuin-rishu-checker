@@ -130,7 +130,7 @@ export default function Page() {
     <>
       {/* フィルタリングされていない元のデータのテーブル */}
       <h1 style={{ textAlign: "center", marginTop: "36px" }}>すべての項目を表示</h1>
-      <TableContainer component={Paper} sx={{ maxWidth: 1000, margin: "auto", mt: 4, maxHeight: 400, overflow: "auto" }}>
+      <TableContainer component={Paper} sx={{ maxWidth: 1000, margin: "auto", mt: 4, maxHeight: 800, overflow: "auto" }}>
         <Table>
           <TableHead>
             <TableRow>
