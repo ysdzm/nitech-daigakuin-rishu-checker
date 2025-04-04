@@ -125,7 +125,7 @@ export default function Page() {
     <>
       {/* チェックされた項目のみ表示するテーブル */}
       <h3>選択した項目のみ表示</h3>
-      <TableContainer component={Paper} sx={{ maxWidth: 1000, margin: "auto", mt: 4 }}>
+      <TableContainer component={Paper} sx={{ maxWidth: 1000, margin: "auto", mt: 4 ,maxHeight: 400, overflow: "auto" }}>
         <Table>
           <TableHead>
             <TableRow>
@@ -206,7 +206,7 @@ export default function Page() {
 
       {/* フィルタリングされていない元のデータのテーブル */}
       <h3>すべての項目を表示</h3>
-      <TableContainer component={Paper} sx={{ maxWidth: 1000, margin: "auto", mt: 4 }}>
+      <TableContainer component={Paper} sx={{ maxWidth: 1000, margin: "auto", mt: 4, maxHeight: 800, overflow: "auto" }}>
         <Table>
           <TableHead>
             <TableRow>
