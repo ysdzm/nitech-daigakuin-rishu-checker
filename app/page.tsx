@@ -96,6 +96,11 @@ export default function Page() {
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
     const sortedRows = [...data].sort((a, b) => {
+      // a[property] または b[property] が存在しない場合、undefined や null を下に
+      if (a[property] == null && b[property] != null) return 1; // a が null で b が有効な場合 b を優先
+      if (a[property] != null && b[property] == null) return -1; // a が有効で b が null の場合 a を優先
+      if (a[property] == null && b[property] == null) return 0; // 両方 null の場合は変わらない
+      
       return isAsc
         ? a[property] > b[property] ? 1 : -1
         : a[property] < b[property] ? 1 : -1;
