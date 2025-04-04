@@ -123,6 +123,87 @@ export default function Page() {
 
   return (
     <>
+      {/* フィルタリングされていない元のデータのテーブル */}
+      <h1 style={{ textAlign: "center", marginTop: "36px" }}>すべての項目を表示</h1>
+      <TableContainer component={Paper} sx={{ maxWidth: 1000, margin: "auto", mt: 4, maxHeight: 400, overflow: "auto" }}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>選択</TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={orderBy === 'クォーター'}
+                  direction={orderBy === 'クォーター' ? order : 'asc'}
+                  onClick={() => handleSort('クォーター')}
+                >
+                  クォーター
+                </TableSortLabel>
+              </TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={orderBy === '曜日'}
+                  direction={orderBy === '曜日' ? order : 'asc'}
+                  onClick={() => handleSort('曜日')}
+                >
+                  曜日
+                </TableSortLabel>
+              </TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={orderBy === '時間'}
+                  direction={orderBy === '時間' ? order : 'asc'}
+                  onClick={() => handleSort('時間')}
+                >
+                  時間
+                </TableSortLabel>
+              </TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={orderBy === '科目区分'}
+                  direction={orderBy === '科目区分' ? order : 'asc'}
+                  onClick={() => handleSort('科目区分')}
+                >
+                  科目区分
+                </TableSortLabel>
+              </TableCell>
+              <TableCell>
+                講義名
+              </TableCell>
+              <TableCell>
+                ファイル名
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data.map((row) => (
+              <TableRow key={row.id} sx={{ height: 40 }}>
+                <TableCell sx={{ padding: '4px 8px' }}>
+                  <Checkbox
+                    checked={selected.includes(row.id)}
+                    onChange={() => handleSelect(row.id)}
+                  />
+                </TableCell>
+                <TableCell>{row.クォーター}</TableCell>
+                <TableCell>{row.曜日}</TableCell>
+                <TableCell>{row.時間}</TableCell>
+                <TableCell>{row.科目区分}</TableCell>
+                <TableCell>{row.講義名}</TableCell>
+                <TableCell>
+                  <a
+                    href={`https://syllabus.ict.nitech.ac.jp/view.php?id=${row.ファイル名}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ textDecoration: 'none', color: 'inherit' }}
+                  >
+                    {row.ファイル名}
+                  </a>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
       {/* チェックされた項目のみ表示するテーブル */}
       <h1 style={{ textAlign: "center", marginTop: "36px" }}>選択した項目のみ表示</h1>
       <TableContainer component={Paper} sx={{ maxWidth: 1000, margin: "auto", mt: 4 ,maxHeight: 400, overflow: "auto" }}>
@@ -176,87 +257,6 @@ export default function Page() {
           </TableHead>
           <TableBody>
             {filteredData.map((row) => (
-              <TableRow key={row.id} sx={{ height: 40 }}>
-                <TableCell sx={{ padding: '4px 8px' }}>
-                  <Checkbox
-                    checked={selected.includes(row.id)}
-                    onChange={() => handleSelect(row.id)}
-                  />
-                </TableCell>
-                <TableCell>{row.クォーター}</TableCell>
-                <TableCell>{row.曜日}</TableCell>
-                <TableCell>{row.時間}</TableCell>
-                <TableCell>{row.科目区分}</TableCell>
-                <TableCell>{row.講義名}</TableCell>
-                <TableCell>
-                  <a
-                    href={`https://syllabus.ict.nitech.ac.jp/view.php?id=${row.ファイル名}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ textDecoration: 'none', color: 'inherit' }}
-                  >
-                    {row.ファイル名}
-                  </a>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
-      {/* フィルタリングされていない元のデータのテーブル */}
-      <h1 style={{ textAlign: "center", marginTop: "36px" }}>すべての項目を表示</h1>
-      <TableContainer component={Paper} sx={{ maxWidth: 1000, margin: "auto", mt: 4, maxHeight: 800, overflow: "auto" }}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>選択</TableCell>
-              <TableCell>
-                <TableSortLabel
-                  active={orderBy === 'クォーター'}
-                  direction={orderBy === 'クォーター' ? order : 'asc'}
-                  onClick={() => handleSort('クォーター')}
-                >
-                  クォーター
-                </TableSortLabel>
-              </TableCell>
-              <TableCell>
-                <TableSortLabel
-                  active={orderBy === '曜日'}
-                  direction={orderBy === '曜日' ? order : 'asc'}
-                  onClick={() => handleSort('曜日')}
-                >
-                  曜日
-                </TableSortLabel>
-              </TableCell>
-              <TableCell>
-                <TableSortLabel
-                  active={orderBy === '時間'}
-                  direction={orderBy === '時間' ? order : 'asc'}
-                  onClick={() => handleSort('時間')}
-                >
-                  時間
-                </TableSortLabel>
-              </TableCell>
-              <TableCell>
-                <TableSortLabel
-                  active={orderBy === '科目区分'}
-                  direction={orderBy === '科目区分' ? order : 'asc'}
-                  onClick={() => handleSort('科目区分')}
-                >
-                  科目区分
-                </TableSortLabel>
-              </TableCell>
-              <TableCell>
-                講義名
-              </TableCell>
-              <TableCell>
-                ファイル名
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {data.map((row) => (
               <TableRow key={row.id} sx={{ height: 40 }}>
                 <TableCell sx={{ padding: '4px 8px' }}>
                   <Checkbox
