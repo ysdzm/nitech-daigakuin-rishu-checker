@@ -1,294 +1,125 @@
 'use client';
 
-import {
-  createColumnHelper,
-  getCoreRowModel,
-  useReactTable,
-  getSortedRowModel
-} from '@tanstack/react-table';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  TableSortLabel,
-  Checkbox
-} from "@mui/material";
-import { useState, useEffect } from 'react';
+import * as React from 'react';
+import { useEffect, useState } from 'react';
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import { Box } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 
-// テーブルデータの型を定義
+
 type ClassSchedule = {
   id: number;
+  講義名: string;
   クォーター: string;
   曜日: string;
   時間: string;
-  時間割番号: string;
   科目区分: string;
-  講義名: string;
   ファイル名: string;
 };
 
-// createColumnHelper を利用してカラム定義を作成
-const columnHelper = createColumnHelper<ClassSchedule>();
-
-const testTableColumnDefs = [
-  columnHelper.accessor((row) => row.クォーター, {
-    id: 'クォーター',
-    header: 'クォーター',
-    sortingFn: 'alphanumeric',
-  }),
-  columnHelper.accessor((row) => row.曜日, {
-    id: '曜日',
-    header: '曜日',
-    sortingFn: 'alphanumeric',
-  }),
-  columnHelper.accessor((row) => row.時間, {
-    id: '時間',
-    header: '時間',
-    sortingFn: 'alphanumeric',
-  }),
-  columnHelper.accessor((row) => row.科目区分, {
-    id: '科目区分',
-    header: '科目区分',
-    sortingFn: 'alphanumeric',
-  }),
-  columnHelper.accessor((row) => row.講義名, {
-    id: '講義名',
-    header: '講義名',
-    sortingFn: 'alphanumeric',
-  }),
-  columnHelper.accessor((row) => row.ファイル名, {
-    id: 'ファイル名',
-    header: 'ファイル名',
-    sortingFn: 'alphanumeric',
-  }),
+const columns = [
+  { field: 'id', headerName: 'ID', width: 70 },
+  { field: '講義名', headerName: '講義名', width: 300 },
+  { field: 'クォーター', headerName: 'クォーター', width: 130 },
+  { field: '曜日', headerName: '曜日', width: 90 },
+  { field: '時間', headerName: '時間', width: 90 },
+  { field: '科目区分', headerName: '科目区分', width: 120 },
+  {
+    field: 'ファイル名',
+    headerName: 'ファイル名',
+    width: 100,
+    renderCell: (params: any) => (
+      <a
+        href={`https://syllabus.ict.nitech.ac.jp/view.php?id=${params.value}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ textDecoration: 'none', color: 'inherit' }}
+      >
+        {params.value}
+      </a>
+    ),
+  },
 ];
 
-export default function Page() {
+export default function MyTable() {
   const [data, setData] = useState<ClassSchedule[]>([]);
-  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
-  const [orderBy, setOrderBy] = useState<keyof ClassSchedule>('クォーター');
-  const [selected, setSelected] = useState<number[]>([]);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
   useEffect(() => {
-    // 仮のJSONデータを読み込む
     const fetchData = async () => {
-      const url = process.env.NODE_ENV === 'development'
-        ? '/all_timetable_data.json'
-        : 'https://ysdzm.github.io/nitech-daigakuin-rishu-checker/all_timetable_data.json';
+      const url =
+        process.env.NODE_ENV === 'development'
+          ? '/all_timetable_data.json'
+          : 'https://ysdzm.github.io/nitech-daigakuin-rishu-checker/all_timetable_data.json';
 
       const response = await fetch(url);
-      const jsonData: ClassSchedule[] = await response.json();
-      // IDを付与
-      const dataWithId = jsonData.map((item, index) => ({ ...item, id: index + 1 }));
+      const jsonData: Omit<ClassSchedule, 'id'>[] = await response.json();
+
+      const dataWithId: ClassSchedule[] = jsonData.map((item, index) => ({
+        ...item,
+        id: index + 1,
+      }));
+
       setData(dataWithId);
     };
 
     fetchData();
   }, []);
 
-  // ソート処理
-  const handleSort = (property: keyof ClassSchedule) => {
-    const isAsc = orderBy === property && order === "asc";
-    setOrder(isAsc ? "desc" : "asc");
-    setOrderBy(property);
-    const sortedRows = [...data].sort((a, b) => {
-      // a[property] または b[property] が存在しない場合、undefined や null を下に
-      if (a[property] == null && b[property] != null) return 1; // a が null で b が有効な場合 b を優先
-      if (a[property] != null && b[property] == null) return -1; // a が有効で b が null の場合 a を優先
-      if (a[property] == null && b[property] == null) return 0; // 両方 null の場合は変わらない
-      
-      return isAsc
-        ? a[property] > b[property] ? 1 : -1
-        : a[property] < b[property] ? 1 : -1;
-    });
-    setData(sortedRows);
-  };
+  if (data.length === 0) {
+    return <p>Loading...</p>; // or null
+  }
 
-  // チェックボックス処理
-  const handleSelect = (id: number) => {
-    setSelected((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
-  };
-
-  // チェックボックスで選択されたデータのみ表示
-  const filteredData = data.filter((row) => selected.includes(row.id));
-
-  // useReactTable 呼び出し
-  const table = useReactTable<ClassSchedule>({
-    columns: testTableColumnDefs,
-    data: data,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-  });
+  console.log(selectedIds);
+  const filteredData = data.filter((row) => selectedIds.includes(row.id));
+  console.log(filteredData);
 
   return (
-    <>
-      {/* フィルタリングされていない元のデータのテーブル */}
-      <h1 style={{ textAlign: "center", marginTop: "36px" }}>すべての項目を表示</h1>
-      <TableContainer component={Paper} sx={{ maxWidth: 1000, margin: "auto", mt: 4, maxHeight: 800, overflow: "auto" }}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell sx={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>選択</TableCell>
-              <TableCell sx={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
-                <TableSortLabel
-                  active={orderBy === 'クォーター'}
-                  direction={orderBy === 'クォーター' ? order : 'asc'}
-                  onClick={() => handleSort('クォーター')}
-                >
-                  クォーター
-                </TableSortLabel>
-              </TableCell>
-              <TableCell sx={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
-                <TableSortLabel
-                  active={orderBy === '曜日'}
-                  direction={orderBy === '曜日' ? order : 'asc'}
-                  onClick={() => handleSort('曜日')}
-                >
-                  曜日
-                </TableSortLabel>
-              </TableCell>
-              <TableCell sx={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
-                <TableSortLabel
-                  active={orderBy === '時間'}
-                  direction={orderBy === '時間' ? order : 'asc'}
-                  onClick={() => handleSort('時間')}
-                >
-                  時間
-                </TableSortLabel>
-              </TableCell>
-              <TableCell sx={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
-                <TableSortLabel
-                  active={orderBy === '科目区分'}
-                  direction={orderBy === '科目区分' ? order : 'asc'}
-                  onClick={() => handleSort('科目区分')}
-                >
-                  科目区分
-                </TableSortLabel>
-              </TableCell>
-              <TableCell sx={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
-                講義名
-              </TableCell>
-              <TableCell sx={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
-                ファイル名
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {data.map((row) => (
-              <TableRow key={row.id} sx={{ height: 40 }}>
-                <TableCell sx={{ padding: '4px 8px' }}>
-                  <Checkbox
-                    checked={selected.includes(row.id)}
-                    onChange={() => handleSelect(row.id)}
-                  />
-                </TableCell>
-                <TableCell>{row.クォーター}</TableCell>
-                <TableCell>{row.曜日}</TableCell>
-                <TableCell>{row.時間}</TableCell>
-                <TableCell>{row.科目区分}</TableCell>
-                <TableCell>{row.講義名}</TableCell>
-                <TableCell>
-                  <a
-                    href={`https://syllabus.ict.nitech.ac.jp/view.php?id=${row.ファイル名}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ textDecoration: 'none', color: 'inherit' }}
-                  >
-                    {row.ファイル名}
-                  </a>
-                </TableCell>
+    <Box sx={{ height: 1000, width: '100%', maxWidth: 1000, margin: 'auto', mt: 4 }}>
+      <DataGrid
+        rows={data}
+        columns={columns}
+        checkboxSelection
+        disableRowSelectionOnClick
+        onRowSelectionModelChange={(selection) => {
+          const selected = Array.from(selection.ids).map((id) => Number(id));
+          setSelectedIds(selected);
+        }}
+        initialState={{
+          pagination: {
+            paginationModel: { pageSize: 100, page: 0 },
+          },
+        }}
+        pageSizeOptions={[100]}
+        slots={{ toolbar: GridToolbar }}
+      />
+      {/* 下に選択された行だけの表 */}
+      {filteredData.length > 0 && (
+        <TableContainer component={Paper} sx={{ mt: 4 }}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>講義名</TableCell>
+                <TableCell>クォーター</TableCell>
+                <TableCell>曜日</TableCell>
+                <TableCell>時間</TableCell>
+                <TableCell>科目区分</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
-      {/* チェックされた項目のみ表示するテーブル */}
-      <h1 style={{ textAlign: "center", marginTop: "36px" }}>選択した項目のみ表示</h1>
-      <TableContainer component={Paper} sx={{ maxWidth: 1000, margin: "auto", mt: 4 ,maxHeight: 400, overflow: "auto" }}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell sx={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>選択</TableCell>
-              <TableCell sx={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
-                <TableSortLabel
-                  active={orderBy === 'クォーター'}
-                  direction={orderBy === 'クォーター' ? order : 'asc'}
-                  onClick={() => handleSort('クォーター')}
-                >
-                  クォーター
-                </TableSortLabel>
-              </TableCell>
-              <TableCell sx={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
-                <TableSortLabel
-                  active={orderBy === '曜日'}
-                  direction={orderBy === '曜日' ? order : 'asc'}
-                  onClick={() => handleSort('曜日')}
-                >
-                  曜日
-                </TableSortLabel>
-              </TableCell>
-              <TableCell sx={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
-                <TableSortLabel
-                  active={orderBy === '時間'}
-                  direction={orderBy === '時間' ? order : 'asc'}
-                  onClick={() => handleSort('時間')}
-                >
-                  時間
-                </TableSortLabel>
-              </TableCell>
-              <TableCell sx={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
-                <TableSortLabel
-                  active={orderBy === '科目区分'}
-                  direction={orderBy === '科目区分' ? order : 'asc'}
-                  onClick={() => handleSort('科目区分')}
-                >
-                  科目区分
-                </TableSortLabel>
-              </TableCell>
-              <TableCell sx={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
-                講義名
-              </TableCell>
-              <TableCell sx={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
-                ファイル名
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredData.map((row) => (
-              <TableRow key={row.id} sx={{ height: 40 }}>
-                <TableCell sx={{ padding: '4px 8px' }}>
-                  <Checkbox
-                    checked={selected.includes(row.id)}
-                    onChange={() => handleSelect(row.id)}
-                  />
-                </TableCell>
-                <TableCell>{row.クォーター}</TableCell>
-                <TableCell>{row.曜日}</TableCell>
-                <TableCell>{row.時間}</TableCell>
-                <TableCell>{row.科目区分}</TableCell>
-                <TableCell>{row.講義名}</TableCell>
-                <TableCell>
-                  <a
-                    href={`https://syllabus.ict.nitech.ac.jp/view.php?id=${row.ファイル名}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ textDecoration: 'none', color: 'inherit' }}
-                  >
-                    {row.ファイル名}
-                  </a>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </>
+            </TableHead>
+            <TableBody>
+              {filteredData.map((row) => (
+                <TableRow key={row.id}>
+                  <TableCell>{row.講義名}</TableCell>
+                  <TableCell>{row.クォーター}</TableCell>
+                  <TableCell>{row.曜日}</TableCell>
+                  <TableCell>{row.時間}</TableCell>
+                  <TableCell>{row.科目区分}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
+    </Box>
   );
 }
